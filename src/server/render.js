@@ -1,6 +1,7 @@
 /* @flow */
 
 import { createComponentInstanceForVnode } from 'core/vdom/create-component'
+import { renderString } from 'shared/util'
 
 export function createRenderFunction (
   modules: Array<Function>,
@@ -40,6 +41,15 @@ export function createRenderFunction (
     const endTag = `</${el.tag}>`
     if (isUnaryTag(el.tag)) {
       write(startTag, next)
+    } else if (el.data && el.data.props && el.data.props.innerHTML) {
+      write(startTag + renderString(el.data.props.innerHTML) + endTag, next)
+    } else if (el.data && el.data.props && el.data.props.textContent) {
+      const textContent = renderString(el.data.props.textContent).replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/'/g, '&apos;')
+        .replace(/'/g, '&quot;')
+      write(startTag + textContent + endTag, next)
     } else if (!el.children || !el.children.length) {
       write(startTag + endTag, next)
     } else {

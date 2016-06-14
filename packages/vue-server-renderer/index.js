@@ -2652,6 +2652,11 @@ function createRenderFunction(modules, directives, isUnaryTag) {
     var endTag = '</' + el.tag + '>';
     if (isUnaryTag(el.tag)) {
       write(startTag, next);
+    } else if (el.data && el.data.props && el.data.props.innerHTML) {
+      write(startTag + renderString(el.data.props.innerHTML) + endTag, next);
+    } else if (el.data && el.data.props && el.data.props.textContent) {
+      var textContent = renderString(el.data.props.textContent).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&apos;').replace(/'/g, '&quot;');
+      write(startTag + textContent + endTag, next);
     } else if (!el.children || !el.children.length) {
       write(startTag + endTag, next);
     } else {

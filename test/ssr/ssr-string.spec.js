@@ -358,6 +358,30 @@ describe('SSR: renderToString', () => {
     })
   })
 
+  it('v-html directive', done => {
+    renderVmWithOptions({
+      data: {
+        test: '<span>test</span>'
+      },
+      template: '<p v-html="test"></p>'
+    }, result => {
+      expect(result).toContain('<p server-rendered="true"><span>test</span></p>')
+      done()
+    })
+  })
+
+  it('v-text directive', done => {
+    renderVmWithOptions({
+      data: {
+        test: '<span>test</span>'
+      },
+      template: '<p v-text="test"></p>'
+    }, result => {
+      expect(result).toContain('<p server-rendered="true">&lt;span&gt;test&lt;/span&gt;</p>')
+      done()
+    })
+  })
+
   it('custom directives', done => {
     const renderer = createRenderer({
       directives: {
